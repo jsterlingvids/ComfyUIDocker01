@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-COMFY_DIR="${COMFY_DIR:-/workspace/ComfyUI}"
+COMFY_DIR="${COMFY_DIR:-/opt/ComfyUI}"
 EPHEM_ROOT="${EPHEM_ROOT:-/opt/ephemeral}"
 COMFY_PORT="${COMFY_PORT:-8188}"
 JUPYTER_PORT="${JUPYTER_PORT:-8888}"
@@ -21,10 +21,17 @@ export HUGGINGFACE_HUB_CACHE="$HF_CACHE_DIR"
 export TORCH_HOME="$TORCH_CACHE_DIR"
 
 mkdir -p "$MODELS_DIR" "$INPUT_DIR" "$OUTPUT_DIR" "$TEMP_DIR" "$HF_CACHE_DIR" "$TORCH_CACHE_DIR"
+mkdir -p /workspace
+
+if [ ! -d "$COMFY_DIR" ]; then
+  echo "ERROR: COMFY_DIR not found: $COMFY_DIR"
+  exit 1
+fi
 
 ensure_link() {
   local target="$1"
   local link_path="$2"
+  mkdir -p "$(dirname "$link_path")"
 
   if [ -L "$link_path" ]; then
     return
@@ -47,6 +54,10 @@ ensure_link "$OUTPUT_DIR" "$COMFY_DIR/output"
 ensure_link "$TEMP_DIR" "$COMFY_DIR/temp"
 
 cd "$COMFY_DIR"
+if [ ! -f main.py ]; then
+  echo "ERROR: main.py not found in COMFY_DIR: $COMFY_DIR"
+  exit 1
+fi
 
 jupyter lab \
   --ip=0.0.0.0 \

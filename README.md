@@ -40,6 +40,7 @@ docker run --gpus all --rm -it \
 ```
 
 ## Runtime env vars
+- `COMFY_DIR` (default `/opt/ComfyUI`)
 - `COMFY_PORT` (default `8188`)
 - `JUPYTER_PORT` (default `8888`)
 - `JUPYTER_TOKEN` (default empty)

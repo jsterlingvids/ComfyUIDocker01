@@ -3,8 +3,8 @@ FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
-    VENV_PATH=/workspace/comfy-venv \
-    PATH=/workspace/comfy-venv/bin:/workspace/.npm-global/bin:/workspace/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    VENV_PATH=/opt/comfy-venv \
+    PATH=/opt/comfy-venv/bin:/opt/.npm-global/bin:/workspace/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
@@ -35,17 +35,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python3 -m venv "$VENV_PATH" && \
     pip install --upgrade pip setuptools wheel uv
 
-RUN mkdir -p /workspace/.npm-global /workspace/home && \
-    npm config set prefix /workspace/.npm-global && \
+RUN mkdir -p /opt/.npm-global /workspace/home && \
+    npm config set prefix /opt/.npm-global && \
     npm install -g @openai/codex@0.116.0
 
-WORKDIR /workspace
+WORKDIR /opt
 
-COPY context/ComfyUI /workspace/ComfyUI
-COPY context/workspace_files /workspace/workspace_files
-COPY context/custom_node_requirement_files.txt /workspace/custom_node_requirement_files.txt
-COPY context/requirements_current_freeze.txt /workspace/requirements_current_freeze.txt
-COPY context/context_manifest.txt /workspace/context_manifest.txt
+COPY context/ComfyUI /opt/ComfyUI
+COPY context/workspace_files /opt/workspace_files
+COPY context/custom_node_requirement_files.txt /opt/custom_node_requirement_files.txt
+COPY context/requirements_current_freeze.txt /opt/requirements_current_freeze.txt
+COPY context/context_manifest.txt /opt/context_manifest.txt
 COPY start.sh /start.sh
 
 RUN chmod +x /start.sh
@@ -53,19 +53,19 @@ RUN chmod +x /start.sh
 RUN mkdir -p /workspace/bin && cat > /workspace/bin/codexp <<'EOS' && chmod +x /workspace/bin/codexp
 #!/usr/bin/env bash
 export HOME=/workspace/home
-export NPM_CONFIG_PREFIX=/workspace/.npm-global
-export PATH=/workspace/.npm-global/bin:/workspace/bin:$PATH
+export NPM_CONFIG_PREFIX=/opt/.npm-global
+export PATH=/opt/.npm-global/bin:/workspace/bin:$PATH
 exec codex "$@"
 EOS
 
 # Install core ComfyUI dependencies from the audited setup snapshot.
-RUN pip install --no-cache-dir -r /workspace/ComfyUI/requirements.txt
+RUN pip install --no-cache-dir -r /opt/ComfyUI/requirements.txt
 
 # Install top-level custom node dependencies. Failures can be tolerated for optional nodes.
 ARG CUSTOM_NODE_REQ_STRICT=0
 RUN bash -lc 'set -euo pipefail; \
   shopt -s nullglob; \
-  for req in /workspace/ComfyUI/custom_nodes/*/requirements*.txt; do \
+  for req in /opt/ComfyUI/custom_nodes/*/requirements*.txt; do \
     echo "Installing $req"; \
     if ! pip install --no-cache-dir -r "$req"; then \
       if [ "$CUSTOM_NODE_REQ_STRICT" = "1" ]; then \
@@ -82,7 +82,7 @@ RUN pip install --no-cache-dir \
   librosa sounddevice glitch-this PyOpenGL glfw moviepy matplotlib reportlab openai PyPDF2 pdf2image Wand
 
 # Restore selected workflow/helper files into /workspace.
-RUN cp -a /workspace/workspace_files/. /workspace/
+RUN mkdir -p /workspace && cp -a /opt/workspace_files/. /workspace/
 
 EXPOSE 8188 8888
 
