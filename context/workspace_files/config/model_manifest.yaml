@@ -1,0 +1,37 @@
+models:
+  # -------- WAN 2.1 core (I2V 14B) --------
+  wan2.1_i2v_480p_14B_fp16.safetensors:
+    preset: wan
+    type: huggingface
+    repo: Comfy-Org/Wan_2.1_ComfyUI_repackaged
+    filename: split_files/diffusion_models/wan2.1_i2v_480p_14B_fp16.safetensors
+    target_subdir: diffusion_models
+
+  wan_2.1_vae.safetensors:
+    preset: wan
+    type: huggingface
+    repo: Comfy-Org/Wan_2.1_ComfyUI_repackaged
+    filename: split_files/vae/wan_2.1_vae.safetensors
+    target_subdir: vae
+
+  umt5_xxl_fp8_e4m3fn_scaled.safetensors:
+    preset: wan
+    type: huggingface
+    repo: Comfy-Org/Wan_2.1_ComfyUI_repackaged
+    filename: split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors
+    target_subdir: text_encoders
+
+  clip_vision_h.safetensors:
+    preset: wan
+    type: huggingface
+    repo: Comfy-Org/Wan_2.1_ComfyUI_repackaged
+    filename: split_files/clip_vision/clip_vision_h.safetensors
+    target_subdir: clip_vision
+
+  # -------- Audio --------
+  wav2vec2-base-960h.bin:
+    preset: wan
+    type: huggingface
+    repo: facebook/wav2vec2-base-960h
+    filename: pytorch_model.bin
+    target_subdir: audio

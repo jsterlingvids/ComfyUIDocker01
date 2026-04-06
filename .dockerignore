@@ -1,0 +1,25 @@
+# Keep build context lean by default.
+*
+
+# Required export artifacts
+!Dockerfile
+!start.sh
+!.dockerignore
+!README.md
+!MANIFEST.md
+!prepare_context.sh
+!context/
+!context/**
+
+# Additional safety filters inside staged context
+context/**/.git
+context/**/__pycache__
+context/**/*.pyc
+context/**/.ipynb_checkpoints
+context/**/*.log
+context/ComfyUI/models
+context/ComfyUI/input
+context/ComfyUI/output
+context/ComfyUI/temp
+context/ComfyUI/custom_nodes/comfyui_controlnet_aux/ckpts
+context/ComfyUI/custom_nodes/ComfyUI-WanVideoWrapper/text_embed_cache

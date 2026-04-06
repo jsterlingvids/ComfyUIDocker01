@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+exec /workspace/comfy-venv/bin/python /workspace/scripts/workflow_model_manager.py "$@"
+
