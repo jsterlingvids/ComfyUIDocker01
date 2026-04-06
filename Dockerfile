@@ -3,7 +3,6 @@ FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
-    TINI_SUBREAPER=1 \
     VENV_PATH=/workspace/comfy-venv \
     PATH=/workspace/comfy-venv/bin:/workspace/.npm-global/bin:/workspace/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
@@ -87,4 +86,4 @@ RUN cp -a /workspace/workspace_files/. /workspace/
 
 EXPOSE 8188 8888
 
-ENTRYPOINT ["/usr/bin/tini", "-s", "--", "/start.sh"]
+ENTRYPOINT ["/start.sh"]
